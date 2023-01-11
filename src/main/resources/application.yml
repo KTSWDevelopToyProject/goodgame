@@ -1,5 +1,8 @@
 spring:
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/test
-    username: donghyeon
-    password: kkk__14720
+    url: r2dbc:postgresql://54.180.176.187:5432/ktgame_database
+    username: ktgame
+    password: ktgame
+logging:
+  level:
+    root: debug
