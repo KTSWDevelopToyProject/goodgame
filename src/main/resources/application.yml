@@ -3,6 +3,11 @@ spring:
     url: r2dbc:postgresql://54.180.176.187:5432/ktgame_database
     username: ktgame
     password: ktgame
+  data:
+    mongodb:
+      host: 54.180.176.187
+      port: 27017
+      database: chatdb
 logging:
   level:
     root: debug
