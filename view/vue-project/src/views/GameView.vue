@@ -85,7 +85,8 @@ export default {
       console.log(data);
       this.user1Id = data.user1Id;
       this.user2Id = data.user2Id;
-      document.querySelector("#gameScore").innerHTML = data.gameScore;
+      document.querySelector("#gameScore").textContent = '';
+      document.querySelector("#gameScore").textContent = data.gameScore;
       switch (data.status) {
         case "G":
           if (this.userId === data.currentUserId) {
@@ -131,14 +132,14 @@ export default {
       this.sendMessage(true);
     },
     async sendMessage(isSelectBtn) {
-      let currentScore = document.querySelector("#gameScore").innerHTML;
+      let currentScore = document.querySelector("#gameScore").textContent;
 
       let game = {
         "gameId" : this.gameId,
         "user1Id" : this.user1Id,
         "user2Id" : this.user2Id,
         "currentUserId" : this.userId,
-        "gameScore" : currentScore + 1,
+        "gameScore" : 1 + Number(currentScore),
         "status" : isSelectBtn ? "S" : "G"
       };
 
