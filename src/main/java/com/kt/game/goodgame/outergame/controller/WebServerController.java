@@ -17,7 +17,7 @@ public class WebServerController {
         headers.forEach((key, value) -> log.info(String.format(">>>> Header %s => %s", key, value)));
 
         log.info("### Received: /webclient/" + param);
-        String msg = param + "Working successfully !!!";
+        String msg = param + " => Working successfully !!!";
         log.info("### Sent : " + msg);
         return msg;
     }
