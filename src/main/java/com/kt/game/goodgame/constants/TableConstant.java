@@ -1,4 +1,4 @@
-package com.kt.game.goodgame;
+package com.kt.game.goodgame.constants;
 
 public class TableConstant {
 
