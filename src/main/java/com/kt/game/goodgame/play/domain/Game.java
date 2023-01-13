@@ -14,6 +14,6 @@ public class Game {
     private String user2Id;
     private String currentUserId;
     private String gameScore;
-    private String status; // G : go, S : stop, E : end
+    private String status; // A: Access, G : go, S : stop, E : end
 
 }
