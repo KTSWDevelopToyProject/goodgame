@@ -1,4 +1,4 @@
-package com.kt.game.goodgame.config;
+package com.kt.game.goodgame.outergame.config;
 
 import com.kt.game.goodgame.outergame.handler.MemberHandler;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class RouterConfig {
     private final MemberHandler memberHandler;
 
     /**
-     * Member Router
+     * Member RouterFunction
      */
     @Bean
     public RouterFunction<ServerResponse> memberRouter() {

@@ -12,6 +12,9 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface MemberRepository extends ReactiveCrudRepository<Member, String> {
 
+    /**
+     * userId 로 Member 단 건 조회 repository
+     */
     @Query("""
                 SELECT user_id
                      , user_name
@@ -24,6 +27,9 @@ public interface MemberRepository extends ReactiveCrudRepository<Member, String>
             """)
     Mono<Member> retrieveMemberByUserId(String userId);
 
+    /**
+     * userName 으로 Member 목록 조회 repository
+     */
     @Query("""
                 SELECT user_id
                      , user_name
@@ -36,6 +42,9 @@ public interface MemberRepository extends ReactiveCrudRepository<Member, String>
             """)
     Flux<Member> retrieveMemberByUserName(String userName);
 
+    /**
+     * Member 수정 repository
+     */
     @Modifying
     @Query("""
                 UPDATE tb_ktgame_member
@@ -47,6 +56,9 @@ public interface MemberRepository extends ReactiveCrudRepository<Member, String>
                                @Param("accountActivatedYn") String accountActivatedYn,
                                @Param("loginYn") String loginYn);
 
+    /**
+     * Member 삭제 repository
+     */
     @Modifying
     @Query("""
             DELETE FROM tb_ktgame_member
