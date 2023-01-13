@@ -17,12 +17,30 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
+    public Mono<Member> retrieveMemberByUserId(String userId) {
+        return memberRepository.retrieveMemberByUserId(userId);
+    }
+
     public Flux<Member> retrieveMemberByUserName(String userName) {
-        return memberRepository.findByUserName(userName);
+        return memberRepository.retrieveMemberByUserName(userName);
     }
 
     public Mono<Member> createMember(Member member) {
         return memberRepository.save(member);
+    }
+
+    public Mono<Member> updateMember(Member member) {
+        return memberRepository.updateMember(member.getUserId(), member.getUserName(), member.getAccountActivatedYn(), member.getLoginYn())
+                .flatMap(result -> {
+                    if (!result) {
+                        return Mono.error(new Throwable("업데이트 실패"));
+                    }
+                    return retrieveMemberByUserId(member.getUserId());
+                });
+    }
+
+    public Mono<Boolean> deleteMember(String userId) {
+        return memberRepository.deleteMember(userId);
     }
 
 }
