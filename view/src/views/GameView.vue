@@ -1,0 +1,268 @@
+<template>
+  <div>
+
+    <div id="wrapper">
+
+      <div id="content">
+
+
+
+
+        <div id="game_score">
+
+          <span id="gameScore"></span>
+
+        </div>
+
+        <el-button id="circle_plus"
+                   :disabled="isCirclePlusDisabled"
+                   @click="circlePlusClickEvent()"
+        >
+          <el-icon ><ArrowUp id="circlePlus"
+                             :opacity="isCirclePlusOpacity"
+                             style="width: 55px; height: 55px" /></el-icon>
+        </el-button>
+
+        <el-button id="select_btn"
+                   :disabled="isSelectBtnDisabled"
+                   @click="selectBtnClickEvent()"
+        >
+          <el-icon ><Check id="selectBtn"
+                           :opacity="isSelectBtnOpacity"
+                           style="width: 55px; height: 55px"/></el-icon>
+        </el-button>
+
+
+
+
+
+      </div>
+    </div>
+
+
+
+
+
+
+  </div>
+
+
+
+  <el-dialog
+      v-model="dialogVisible"
+      title="Tips"
+      width="30%"
+      :before-close="handleClose"
+  >
+    <span>게임이 종료되었습니다.</span>
+    <template #footer>
+      <span class="dialog-footer">
+<!--        <el-button @click="clickDialogButton(false)">Cancel</el-button>-->
+        <el-button type="primary" @click="clickDialogButton(true)">
+          종료
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+
+</template>
+
+<script>
+
+
+export default {
+  name: 'GameView',
+  components: {
+
+  },
+  data() {
+    return {
+      eventSource: '',
+      gameId: '',
+      userId: '',
+      user1Id: '',
+      user2Id: '',
+      isCirclePlusDisabled: true,
+      isCirclePlusOpacity: 0.5,
+      isSelectBtnDisabled: true,
+      isSelectBtnOpacity: 0.5,
+      currentJoinedMember: 0,
+      dialogVisible: false,
+    };
+  },
+  created() {
+    this.gameId = prompt("gameId?");
+    this.userId = prompt("userId?");
+// @ is an alias to /src
+    const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
+
+    eventSource.onmessage = (event) => {
+
+      const data = JSON.parse(event.data);
+
+      this.changeGameView(data);
+
+    };
+
+  },
+  methods: {
+    changeGameView(data) {
+      console.log(data);
+      this.user1Id = data.user1Id;
+      this.user2Id = data.user2Id;
+      document.querySelector("#gameScore").textContent = '';
+      document.querySelector("#gameScore").textContent = data.gameScore;
+
+      if (data.gameScore >= 3) {
+        this.buttonAction(true);
+
+        this.dialogVisible = true;
+        // return;
+      }
+
+      switch (data.status) {
+        case "G":
+          if (this.userId === data.currentUserId) {
+            this.buttonAction(false);
+          } else {
+            this.buttonAction(true);
+          }
+          break;
+        case "S":
+          if (this.userId === data.currentUserId) {
+            this.buttonAction(true);
+          } else {
+            this.buttonAction(false);
+          }
+          break;
+        case "A":
+          this.currentJoinedMember++;
+          if (this.currentJoinedMember === 2) {
+            if (this.userId === data.user1Id) {
+              this.buttonAction(false);
+            } else {
+              this.buttonAction(true);
+            }
+
+          }
+          break;
+      }
+
+
+    },
+    buttonAction(flag) {
+      if (flag) {
+        this.isCirclePlusDisabled = true;
+        this.isCirclePlusOpacity = 0.5;
+        this.isSelectBtnDisabled = true;
+        this.isSelectBtnOpacity = 0.5;
+      } else {
+        this.isCirclePlusDisabled = false;
+        this.isCirclePlusOpacity = 1.0;
+        this.isSelectBtnDisabled = false;
+        this.isSelectBtnOpacity = 1.0;
+      }
+    },
+    circlePlusClickEvent() {
+      console.log('circlePlusClickEvent');
+      let game = {
+        "gameId" : this.gameId,
+        "user1Id" : this.user1Id,
+        "user2Id" : this.user2Id,
+        "currentUserId" : this.userId,
+        "gameScore" : 1 + Number(currentScore),
+        "status" : "G"
+      };
+      this.sendMessage(false);
+    },
+    selectBtnClickEvent() {
+      console.log('selectBtnClickEvent');
+      let game = {
+        "gameId" : this.gameId,
+        "user1Id" : this.user1Id,
+        "user2Id" : this.user2Id,
+        "currentUserId" : this.userId,
+        "gameScore" : Number(currentScore),
+        "status" : "S"
+      };
+      this.sendMessage(true);
+    },
+    async sendMessage(isSelectBtn) {
+      let currentScore = document.querySelector("#gameScore").textContent;
+
+      // let game = {
+      //   "gameId" : this.gameId,
+      //   "user1Id" : this.user1Id,
+      //   "user2Id" : this.user2Id,
+      //   "currentUserId" : this.userId,
+      //   "gameScore" : isSelectBtn ? Number(currentScore): 1 + Number(currentScore),
+      //   "status" : isSelectBtn ? "S" : "G"
+      // };
+
+      let response = await fetch(`http://localhost:8080/game/${this.gameId}`, {
+        method: "post",
+        body: JSON.stringify(game),
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      })
+
+      console.log(response);
+    },
+    clickDialogButton(isConfirm) {
+      this.dialogVisible = false;
+      if (isConfirm) {
+        console.log("click OK Button");
+      } else {
+        console.log("click CANCEL Button");
+      }
+    },
+    handleClose() {
+      console.log("handleClose");
+    },
+
+  }
+}
+</script>
+
+<style scoped>
+#wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color:beige;
+}
+#content {
+  font-family: system-ui, serif;
+  font-size: 2rem;
+  padding: 3rem;
+  width: 16rem;
+  height: 20rem;
+  border-radius: 1rem;
+  background: cornflowerblue;
+}
+#container {
+  padding: 30px;
+  background-color:red;
+}
+#container2 {
+  box-size: border-box;
+  width: 100vw;
+  margin: 3vw;
+  background-color:blue;
+}
+.test {
+
+  position: relative;
+
+
+  background-color:red;
+}
+.test2 {
+  background-color:blue;
+  top: 50%;
+  width: 100%;
+}
+</style>
