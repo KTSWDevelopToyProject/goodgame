@@ -1,5 +1,6 @@
 package com.kt.game.goodgame.outergame.handler;
 
+import com.kt.game.goodgame.exception.handler.BadRequestException;
 import com.kt.game.goodgame.outergame.domain.Member;
 import com.kt.game.goodgame.outergame.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,9 @@ public class MemberHandler {
     public Mono<ServerResponse> createMember(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(Member.class)
                 .flatMap(member -> memberService.createMember(member))
-                .flatMap(member -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(member), Member.class));
+                .flatMap(member -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Mono.just(member), Member.class));
     }
 
     /**
@@ -60,7 +63,12 @@ public class MemberHandler {
                     member.setUserId(userId);
                     return memberService.updateMember(member);
                 })
-                .flatMap(member -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(Mono.just(member), Member.class));
+                .flatMap(result -> memberService.retrieveMemberByUserId(userId))
+                .switchIfEmpty(Mono.error(new BadRequestException("수정된 멤버가 없습니다.")))
+                .flatMap(member -> ServerResponse
+                        .ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(Mono.just(member), Member.class));
     }
 
     /**
@@ -68,7 +76,7 @@ public class MemberHandler {
      */
     public Mono<ServerResponse> deleteMember(ServerRequest serverRequest) {
         String userId = serverRequest.pathVariable("userId");
-        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(memberService.deleteMember(userId), Boolean.class);
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(memberService.deleteMember(userId), Integer.class);
     }
 
 }

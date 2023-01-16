@@ -41,6 +41,12 @@
             <artifactId>r2dbc-postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.r2dbc/r2dbc-postgresql -->
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-postgresql</artifactId>
+            <version>0.8.13.RELEASE</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -52,6 +58,12 @@
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.6</version>
             <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.r2dbc/r2dbc-proxy -->
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-proxy</artifactId>
+            <version>1.1.0.RELEASE</version>
         </dependency>
     </dependencies>
 

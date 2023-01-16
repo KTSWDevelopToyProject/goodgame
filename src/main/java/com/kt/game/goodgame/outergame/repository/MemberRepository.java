@@ -51,7 +51,7 @@ public interface MemberRepository extends ReactiveCrudRepository<Member, String>
                 SET (user_name, account_activated_yn, login_yn) = (:userName, :accountActivatedYn, :loginYn)
                 WHERE user_id = :userId
             """)
-    Mono<Boolean> updateMember(@Param("userId") String userId,
+    Mono<Integer> updateMember(@Param("userId") String userId,
                                @Param("userName") String userName,
                                @Param("accountActivatedYn") String accountActivatedYn,
                                @Param("loginYn") String loginYn);
@@ -64,6 +64,6 @@ public interface MemberRepository extends ReactiveCrudRepository<Member, String>
             DELETE FROM tb_ktgame_member
             WHERE user_id = :userId
         """)
-    Mono<Boolean> deleteMember(@Param("userId") String userId);
+    Mono<Integer> deleteMember(@Param("userId") String userId);
 
 }

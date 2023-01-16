@@ -1,8 +1,8 @@
 spring:
-  r2dbc:
-    url: r2dbc:postgresql://54.180.176.187:5432/ktgame_database
-    username: ktgame
-    password: ktgame
+#  r2dbc:
+#    url: r2dbc:postgresql://54.180.176.187:5432/ktgame_database
+#    username: ktgame
+#    password: ktgame
   data:
     mongodb:
       host: 54.180.176.187
