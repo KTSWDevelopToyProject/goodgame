@@ -1,10 +1,13 @@
 package com.kt.game.goodgame.config;
 
+import com.kt.game.goodgame.outergame.repository.GameHistoryRepository;
+import com.kt.game.goodgame.outergame.repository.MemberRepository;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.r2dbc.config.EnableR2dbcAuditing;
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.r2dbc.connection.R2dbcTransactionManager;
@@ -13,11 +16,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableR2dbcAuditing
-@EnableR2dbcRepositories
+@EnableR2dbcRepositories(basePackageClasses = {GameHistoryRepository.class, MemberRepository.class})
 @EnableTransactionManagement
-public class R2dbcConfig {
+public class R2dbcPostgresqlConfig {
 
-    @Bean
+    @Bean(name = "postgresqlConnectionFactory")
+    @Primary
+
     public PostgresqlConnectionFactory getPostgresqlConnectionFactory() {
         return new PostgresqlConnectionFactory(
                 PostgresqlConnectionConfiguration.builder()

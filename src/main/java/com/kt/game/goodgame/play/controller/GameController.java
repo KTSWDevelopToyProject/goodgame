@@ -16,14 +16,14 @@ public class GameController {
 
     @CrossOrigin
     @GetMapping(value = "/game/{gameId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Game> getGameScore(@PathVariable Integer gameId) {
+    public Flux<Game> getGameScore(@PathVariable String gameId) {
         // OrderByGameScoreAsc
         return gameRepository.findByGameId(gameId).subscribeOn(Schedulers.boundedElastic());
     }
 
     @CrossOrigin
     @PostMapping(value = "/game/{gameId}")
-    public Mono<Game> setGameScore(@PathVariable Integer gameId, @RequestBody Game game) {
+    public Mono<Game> setGameScore(@PathVariable String gameId, @RequestBody Game game) {
         game.setGameId(gameId);
         return gameRepository.save(game);
     }

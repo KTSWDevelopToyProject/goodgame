@@ -8,5 +8,5 @@ import reactor.core.publisher.Flux;
 public interface GameRepository extends ReactiveMongoRepository<Game, String> {
 
     @Tailable
-    Flux<Game> findByGameId(Integer gameId);
+    Flux<Game> findByGameId(String gameId);
 }

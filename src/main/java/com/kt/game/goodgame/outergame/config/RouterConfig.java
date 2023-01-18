@@ -30,7 +30,7 @@ public class RouterConfig {
                         .PUT("/user-id/{userId}", memberHandler::updateMember)
                         .DELETE("/user-id/{userId}", memberHandler::deleteMember)
                 )
-                .path("game-history",builder -> builder
+                .path("/game-history",builder -> builder
                         .GET("", gameHistoryHandler::retrieveGameHistories)
                         .GET("/game-id/{gameId}", gameHistoryHandler::retrieveGameHistoryByGameId)
                         .POST("", gameHistoryHandler::createGameHistory)
