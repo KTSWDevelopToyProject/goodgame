@@ -33,6 +33,14 @@
         </el-button>
 
 
+        <el-button id="exit_btn"
+                   :disabled="isExitBtnDisabled"
+                   @click="exitBtnClickEvent()"
+        >
+          <el-icon ><Check id="exitBtn"
+                           :opacity="isExitBtnOpacity"
+                           style="width: 55px; height: 55px"/></el-icon>
+        </el-button>
 
 
 
@@ -87,6 +95,8 @@ export default {
       isCirclePlusOpacity: 0.5,
       isSelectBtnDisabled: true,
       isSelectBtnOpacity: 0.5,
+      isExitBtnDisabled: true,
+      isExitBtnOpacity:0.5,
       currentJoinedMember: 0,
       dialogVisible: false,
     };
@@ -122,6 +132,12 @@ export default {
       }
 
       switch (data.status) {
+        case "E":
+          this.buttonAction(true);
+          console.log("Game Is End!");
+          this.dialogVisible = false;
+          this.isExitBtnDisabled = false;
+          break;
         case "G":
           if (this.userId === data.currentUserId) {
             this.buttonAction(false);
@@ -166,39 +182,50 @@ export default {
     },
     circlePlusClickEvent() {
       console.log('circlePlusClickEvent');
-      let game = {
-        "gameId" : this.gameId,
-        "user1Id" : this.user1Id,
-        "user2Id" : this.user2Id,
-        "currentUserId" : this.userId,
-        "gameScore" : 1 + Number(currentScore),
-        "status" : "G"
-      };
-      this.sendMessage(false);
-    },
-    selectBtnClickEvent() {
-      console.log('selectBtnClickEvent');
-      let game = {
-        "gameId" : this.gameId,
-        "user1Id" : this.user1Id,
-        "user2Id" : this.user2Id,
-        "currentUserId" : this.userId,
-        "gameScore" : Number(currentScore),
-        "status" : "S"
-      };
-      this.sendMessage(true);
-    },
-    async sendMessage(isSelectBtn) {
-      let currentScore = document.querySelector("#gameScore").textContent;
-
       // let game = {
       //   "gameId" : this.gameId,
       //   "user1Id" : this.user1Id,
       //   "user2Id" : this.user2Id,
       //   "currentUserId" : this.userId,
-      //   "gameScore" : isSelectBtn ? Number(currentScore): 1 + Number(currentScore),
-      //   "status" : isSelectBtn ? "S" : "G"
+      //   "gameScore" : 1 + Number(currentScore),
+      //   "status" : "G"
       // };
+      this.sendMessage(false, false);
+    },
+    selectBtnClickEvent() {
+      console.log('selectBtnClickEvent');
+      // let game = {
+      //   "gameId" : this.gameId,
+      //   "user1Id" : this.user1Id,
+      //   "user2Id" : this.user2Id,
+      //   "currentUserId" : this.userId,
+      //   "gameScore" : Number(currentScore),
+      //   "status" : "S"
+      // };
+      this.sendMessage(false, true);
+    },
+    async sendMessage(isEnd, isSelectBtn) {
+      let currentScore = document.querySelector("#gameScore").textContent;
+      let game;
+      if (isEnd) {
+        game = {
+          "gameId" : this.gameId,
+          "user1Id" : this.user1Id,
+          "user2Id" : this.user2Id,
+          "currentUserId" : this.userId,
+          "gameScore" : Number(currentScore),
+          "status" : "E"
+        };
+      } else {
+        game = {
+          "gameId" : this.gameId,
+          "user1Id" : this.user1Id,
+          "user2Id" : this.user2Id,
+          "currentUserId" : this.userId,
+          "gameScore" : isSelectBtn ? Number(currentScore): 1 + Number(currentScore),
+          "status" : isSelectBtn ? "S" : "G"
+        };
+      }
 
       let response = await fetch(`http://localhost:8080/game/${this.gameId}`, {
         method: "post",
@@ -211,17 +238,20 @@ export default {
       console.log(response);
     },
     clickDialogButton(isConfirm) {
-      this.dialogVisible = false;
       if (isConfirm) {
         console.log("click OK Button");
+        this.sendMessage(true);
       } else {
         console.log("click CANCEL Button");
       }
     },
     handleClose() {
       console.log("handleClose");
+      this.sendMessage(true);
     },
-
+    exitBtnClickEvent() {
+      console.log("exitBtnClickEvent");
+    },
   }
 }
 </script>
