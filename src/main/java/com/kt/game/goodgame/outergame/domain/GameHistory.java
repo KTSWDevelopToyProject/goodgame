@@ -16,18 +16,15 @@ import java.time.LocalDateTime;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Table(TableConstant.MEMBER_TABLE)
-public class Member {
-
-    private String userId;
-    private String userName;
+@Table(TableConstant.GAME_HISTORY)
+public class GameHistory {
+    private String gameId;
+    private String leftUserId;
+    private String rightUserId;
+    private String winnerFlag;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = GoodGameConstant.MILLISECOND_DATE_TIME_FORMAT)
     @CreatedDate
     private LocalDateTime createdAt;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonFormat(pattern = GoodGameConstant.MILLISECOND_DATE_TIME_FORMAT)
-    private LocalDateTime deletedAt;
-    private String accountActivatedYn;
-    private String loginYn;
+    private String gameStatusCode;
 }
