@@ -1,18 +1,12 @@
 package com.kt.game.goodgame.config;
 
-import com.kt.game.goodgame.play.repository.GameRepository;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoClients;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableReactiveMongoRepositories(basePackages = {"com.kt.game.goodgame.play"})
+@EnableReactiveMongoRepositories(basePackages = {"com.kt.game.goodgame.innergame"})
 public class MongodbConfig {
 
 //    @Bean
