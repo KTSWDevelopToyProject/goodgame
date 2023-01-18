@@ -1,6 +1,6 @@
-package com.kt.game.goodgame.play.repository;
+package com.kt.game.goodgame.innergame.repository;
 
-import com.kt.game.goodgame.play.domain.Game;
+import com.kt.game.goodgame.innergame.domain.Game;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Tailable;
 import reactor.core.publisher.Flux;

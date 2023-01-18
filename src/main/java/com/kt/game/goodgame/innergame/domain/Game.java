@@ -1,4 +1,4 @@
-package com.kt.game.goodgame.play.domain;
+package com.kt.game.goodgame.innergame.domain;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
