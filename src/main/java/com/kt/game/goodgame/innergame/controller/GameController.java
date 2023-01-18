@@ -1,7 +1,7 @@
-package com.kt.game.goodgame.play.controller;
+package com.kt.game.goodgame.innergame.controller;
 
-import com.kt.game.goodgame.play.domain.Game;
-import com.kt.game.goodgame.play.repository.GameRepository;
+import com.kt.game.goodgame.innergame.domain.Game;
+import com.kt.game.goodgame.innergame.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +16,15 @@ public class GameController {
 
     @CrossOrigin
     @GetMapping(value = "/game/{gameId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Game> getGameScore(@PathVariable Integer gameId) {
+    public Flux<Game> getGameScore(@PathVariable String gameId) {
         // OrderByGameScoreAsc
         return gameRepository.findByGameId(gameId).subscribeOn(Schedulers.boundedElastic());
     }
 
     @CrossOrigin
-    @PostMapping(value = "/game/{gameId}")
-    public Mono<Game> setGameScore(@PathVariable Integer gameId, @RequestBody Game game) {
-        game.setGameId(gameId);
+    @PostMapping(value = "/game")
+    public Mono<Game> setGameScore(@RequestBody Game game) {
+//        game.setGameId(gameId);
         return gameRepository.save(game);
     }
 }

@@ -1,9 +1,26 @@
 <template>
   <div>
 
+
+
     <div id="wrapper">
 
+
       <div id="content">
+
+        <div id="gameId">
+          <span id="game_id"></span>
+        </div>
+        <div id="user1_info">
+          <span id="user1_id"></span>
+          <span>/</span>
+          <span id="user1_name"></span>
+        </div>
+        <div id="user2_info">
+          <span id="user2_id"></span>
+          <span>/</span>
+          <span id="user2_name"></span>
+        </div>
 
 
 
@@ -86,6 +103,7 @@ export default {
   },
   data() {
     return {
+      gameMaxScore: 3,
       eventSource: '',
       gameId: '',
       userId: '',
@@ -99,6 +117,8 @@ export default {
       isExitBtnOpacity:0.5,
       currentJoinedMember: 0,
       dialogVisible: false,
+      user1_info: {},
+      user2_info: {},
     };
   },
   created() {
@@ -114,9 +134,35 @@ export default {
       this.changeGameView(data);
 
     };
-
   },
   methods: {
+    async setUserInfo(data) {
+      let response = await fetch(`http://localhost:8080/member/user-id/${data.currentUserId}`, {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      });
+
+
+      switch (data.currentUserId) {
+        case data.user1Id:
+          this.user1_info = await response.json();
+          document.querySelector("#user1_id").textContent = this.user1_info.userId;
+          document.querySelector("#user1_name").textContent = this.user1_info.userName;
+          console.log("user1 userId : " + this.user1_info.userId + ", user1 userName : " + this.user1_info.userName);
+          break;
+        case data.user2Id:
+          this.user2_info = await response.json();
+          document.querySelector("#user2_id").textContent = this.user2_info.userId;
+          document.querySelector("#user2_name").textContent = this.user2_info.userName;
+          console.log("user2 userId : " + this.user2_info.userId + ", user2 userName : " + this.user2_info.userName);
+          break;
+        default:
+          console.log("ERROR");
+          break;
+      }
+    },
     changeGameView(data) {
       console.log(data);
       this.user1Id = data.user1Id;
@@ -124,19 +170,19 @@ export default {
       document.querySelector("#gameScore").textContent = '';
       document.querySelector("#gameScore").textContent = data.gameScore;
 
-      if (data.gameScore >= 3) {
-        this.buttonAction(true);
-
-        this.dialogVisible = true;
-        // return;
-      }
+      // if (data.gameScore >= this.gameMaxScore) {
+      //   this.buttonAction(true);
+      //
+      //   this.dialogVisible = true;
+      //   this.sendMessage(true);
+      //   return;
+      // }
 
       switch (data.status) {
         case "E":
           this.buttonAction(true);
           console.log("Game Is End!");
-          this.dialogVisible = false;
-          this.isExitBtnDisabled = false;
+          this.dialogVisible = true;
           break;
         case "G":
           if (this.userId === data.currentUserId) {
@@ -154,6 +200,7 @@ export default {
           break;
         case "A":
           this.currentJoinedMember++;
+          this.setUserInfo(data);
           if (this.currentJoinedMember === 2) {
             if (this.userId === data.user1Id) {
               this.buttonAction(false);
@@ -190,6 +237,16 @@ export default {
       //   "gameScore" : 1 + Number(currentScore),
       //   "status" : "G"
       // };
+      let currentGameScore = document.querySelector("#gameScore").textContent;
+      if (Number(currentGameScore) + 1 >= this.gameMaxScore) {
+        this.buttonAction(true);
+
+        this.dialogVisible = true;
+        this.sendMessage(true);
+        this.sendResult();
+        return;
+      }
+
       this.sendMessage(false, false);
     },
     selectBtnClickEvent() {
@@ -213,7 +270,7 @@ export default {
           "user1Id" : this.user1Id,
           "user2Id" : this.user2Id,
           "currentUserId" : this.userId,
-          "gameScore" : Number(currentScore),
+          "gameScore" : Number(currentScore) + 1,
           "status" : "E"
         };
       } else {
@@ -227,7 +284,7 @@ export default {
         };
       }
 
-      let response = await fetch(`http://localhost:8080/game/${this.gameId}`, {
+      let response = await fetch(`http://localhost:8080/game`, {
         method: "post",
         body: JSON.stringify(game),
         headers: {
@@ -240,18 +297,52 @@ export default {
     clickDialogButton(isConfirm) {
       if (isConfirm) {
         console.log("click OK Button");
-        this.sendMessage(true);
+        this.dialogVisible = false;
+        this.isExitBtnDisabled = false;
       } else {
         console.log("click CANCEL Button");
+        this.dialogVisible = false;
+        this.isExitBtnDisabled = false;
       }
     },
     handleClose() {
       console.log("handleClose");
-      this.sendMessage(true);
+      this.dialogVisible = false;
+      this.isExitBtnDisabled = false;
     },
     exitBtnClickEvent() {
       console.log("exitBtnClickEvent");
     },
+
+    // private String gameId;
+    // private String leftUserId;
+    // private String rightUserId;
+    // private String winnerFlag;
+    // @JsonSerialize(using = LocalDateTimeSerializer.class)
+    //     @JsonFormat(pattern = GoodGameConstant.MILLISECOND_DATE_TIME_FORMAT)
+    //     @CreatedDate
+    // private LocalDateTime createdAt;
+    // private String gameStatusCode;
+
+    async sendResult() {
+      console.log("sendResult()");
+      let gameHistory = {
+        "gameId" : this.gameId,
+        "leftUserId" : this.user1Id,
+        "rightUserId" : this.user2Id,
+        "winnerFlag" : this.userId === this.user1Id ? "L" : "R",
+        "gameStatusCode" : "E"
+      };
+      let response = await fetch(`http://localhost:8080/game-history`, {
+        method: "post",
+        body: JSON.stringify(gameHistory),
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      })
+
+      console.log(response);
+    }
   }
 }
 </script>
