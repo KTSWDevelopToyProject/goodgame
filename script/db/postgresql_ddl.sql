@@ -139,3 +139,15 @@ ALTER TABLE ktgame_common.tb_ktgame_game_history ADD CONSTRAINT pk_game_id PRIMA
 CALL ktgame_common.create_partitions('tb_ktgame_game_history', 'created_at', '2022');
 CALL ktgame_common.create_partitions('tb_ktgame_game_history', 'created_at', '2023');
 CALL ktgame_common.create_partitions('tb_ktgame_game_history', 'created_at', '2024');
+
+-- 레이팅 테이블 생성
+CREATE TABLE ktgame_common.tb_ktgame_game_rating (
+                                                user_id VARCHAR(20) NOT NULL,
+                                                win INTEGER,
+                                                total INTEGER,
+                                                rating_id SERIAL NOT NULL,
+                                                CONSTRAINT pk_game_rating_user_id PRIMARY KEY (user_id)
+);
+COMMENT ON COLUMN ktgame_common.tb_ktgame_game_rating.user_id IS '유저 고유 ID';
+COMMENT ON COLUMN ktgame_common.tb_ktgame_game_rating.win IS '유저 승 수';
+COMMENT ON COLUMN ktgame_common.tb_ktgame_game_rating.total IS '유저 전체 게임 수';
