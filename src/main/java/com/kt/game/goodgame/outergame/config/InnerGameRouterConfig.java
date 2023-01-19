@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Configuration
 @RequiredArgsConstructor
-public class RouterConfig {
+public class InnerGameRouterConfig {
 
     private final MemberHandler memberHandler;
     private final GameHistoryHandler gameHistoryHandler;
@@ -19,7 +19,7 @@ public class RouterConfig {
     /**
      * Member RouterFunction
      */
-    @Bean
+    @Bean(value = "InnerGameRouter")
     public RouterFunction<ServerResponse> router() {
         return RouterFunctions.route()
                 .path("/member", builder -> builder

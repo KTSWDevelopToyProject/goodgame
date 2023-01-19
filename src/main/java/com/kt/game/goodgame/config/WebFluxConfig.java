@@ -1,4 +1,4 @@
-package com.kt.game.goodgame.outergame.config;
+package com.kt.game.goodgame.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
