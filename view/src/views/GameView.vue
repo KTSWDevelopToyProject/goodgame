@@ -15,11 +15,23 @@
           <span id="user1_id"></span>
           <span>/</span>
           <span id="user1_name"></span>
+          <span>/</span>
+          <span id="user1_win"></span>
+          <span>/</span>
+          <span id="user1_total"></span>
+          <span>/</span>
+          <span id="user1_winning_rate"></span>
         </div>
         <div id="user2_info">
           <span id="user2_id"></span>
           <span>/</span>
           <span id="user2_name"></span>
+          <span>/</span>
+          <span id="user2_win"></span>
+          <span>/</span>
+          <span id="user2_total"></span>
+          <span>/</span>
+          <span id="user2_winning_rate"></span>
         </div>
 
 
@@ -118,7 +130,9 @@ export default {
       currentJoinedMember: 0,
       dialogVisible: false,
       user1_info: {},
+      user1_rating: {},
       user2_info: {},
+      user2_rating: {},
     };
   },
   created() {
@@ -144,18 +158,34 @@ export default {
         }
       });
 
+      let response2 = await fetch(`http://localhost:8080/rating/${data.currentUserId}`, {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      });
+
+
 
       switch (data.currentUserId) {
         case data.user1Id:
           this.user1_info = await response.json();
+          this.user1_rating = await response2.json();
           document.querySelector("#user1_id").textContent = this.user1_info.userId;
           document.querySelector("#user1_name").textContent = this.user1_info.userName;
+          document.querySelector("#user1_win").textContent = this.user1_rating.win;
+          document.querySelector("#user1_total").textContent = this.user1_rating.total;
+          document.querySelector("#user1_winning_rate").textContent = String((this.user1_rating.win / this.user1_rating.total) * 100);
           console.log("user1 userId : " + this.user1_info.userId + ", user1 userName : " + this.user1_info.userName);
           break;
         case data.user2Id:
           this.user2_info = await response.json();
+          this.user2_rating = await response2.json();
           document.querySelector("#user2_id").textContent = this.user2_info.userId;
           document.querySelector("#user2_name").textContent = this.user2_info.userName;
+          document.querySelector("#user2_win").textContent = this.user2_rating.win;
+          document.querySelector("#user2_total").textContent = this.user2_rating.total;
+          document.querySelector("#user2_winning_rate").textContent = String((this.user2_rating.win / this.user2_rating.total) * 100);
           console.log("user2 userId : " + this.user2_info.userId + ", user2 userName : " + this.user2_info.userName);
           break;
         default:

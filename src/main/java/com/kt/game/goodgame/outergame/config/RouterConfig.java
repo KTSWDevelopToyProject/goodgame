@@ -2,6 +2,7 @@ package com.kt.game.goodgame.outergame.config;
 
 import com.kt.game.goodgame.outergame.handler.GameHistoryHandler;
 import com.kt.game.goodgame.outergame.handler.MemberHandler;
+import com.kt.game.goodgame.rating.handler.RatingHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ public class RouterConfig {
 
     private final MemberHandler memberHandler;
     private final GameHistoryHandler gameHistoryHandler;
+    private final RatingHandler ratingHandler;
 
     /**
      * Member RouterFunction
@@ -35,6 +37,10 @@ public class RouterConfig {
                         .GET("/game-id/{gameId}", gameHistoryHandler::retrieveGameHistoryByGameId)
                         .POST("", gameHistoryHandler::createGameHistory)
                         .DELETE("/game-id/{gameId}", gameHistoryHandler::deleteGameHistory)
+                )
+                .path("/rating", builder -> builder
+                        .GET("/{userId}", ratingHandler::retrieveRatingByUserId)
+                        .POST("", ratingHandler::upsertRating)
                 )
                 .build();
     }
