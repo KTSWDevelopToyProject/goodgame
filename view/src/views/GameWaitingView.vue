@@ -36,7 +36,7 @@
           <el-button type="primary" style="margin-left: 16px" @click="drawer = true">
             PUSH
           </el-button>
-          <el-drawer v-model="drawer" title="I am the title" :with-header="false" size="84%">
+          <el-drawer v-model="drawer" title="game-play" :with-header="false" size="84%">
             <GameView></GameView>
           </el-drawer>
         </div>
@@ -50,11 +50,6 @@
             </el-card>
           <el-card class="box-card-2">
           </el-card>
-          <div class="game-play-view" :style="{display: isGamePlayView}">
-            <GameViewTest>
-              <!-- 여기에 게임 플레이 화면 들어옴 -->
-            </GameViewTest>
-          </div>
         </el-main>
         <el-footer class="footer">
           <div class="footer-title">Copyright</div>
@@ -82,7 +77,6 @@ export default {
       baseUrl: `http://localhost:8080/waiting-rooms`,
       rooms : [],
 
-      isGamePlayView : false,
       drawer : false,
 
     };
@@ -107,14 +101,9 @@ export default {
   },
 
   methods: {
-    gamePlayView() {
-      this.isGamePlayView = !this.isGamePlayView;
-      console.log(this.isGamePlayView);
-    },
-
-    drawerTest() {
-     this.drawer = ref(false);
-    }
+    // pushGameButton() {
+    //  this.drawer = ref(false);
+    // }
   },
 }
 </script>
@@ -146,13 +135,6 @@ export default {
   align-items: center;
   flex-direction: row;
   justify-content: center;
-}
-.layout-container-demo .toolbar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  right: 20px;
 }
 .layout-container-demo .aside {
   width: 200px;

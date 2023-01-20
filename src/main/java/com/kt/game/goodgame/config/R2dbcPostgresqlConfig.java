@@ -2,6 +2,7 @@ package com.kt.game.goodgame.config;
 
 import com.kt.game.goodgame.outergame.repository.GameHistoryRepository;
 import com.kt.game.goodgame.outergame.repository.MemberRepository;
+import com.kt.game.goodgame.rating.repository.RatingRepository;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.spi.ConnectionFactory;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableR2dbcAuditing
-@EnableR2dbcRepositories(basePackageClasses = {GameHistoryRepository.class, MemberRepository.class})
+@EnableR2dbcRepositories(basePackages = {"com.kt.game.goodgame"})
 @EnableTransactionManagement
 public class R2dbcPostgresqlConfig {
 
