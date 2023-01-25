@@ -106,7 +106,8 @@
 </template>
 
 <script>
-
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
 
 export default {
   name: 'GameView',
@@ -115,6 +116,10 @@ export default {
   },
   data() {
     return {
+      connection: null,
+      connection2: null,
+      connection3: null,
+      stompClient: null,
       gameMaxScore: 3,
       eventSource: '',
       gameId: '',
@@ -125,7 +130,7 @@ export default {
       isCirclePlusOpacity: 0.5,
       isSelectBtnDisabled: true,
       isSelectBtnOpacity: 0.5,
-      isExitBtnDisabled: true,
+      isExitBtnDisabled: false,
       isExitBtnOpacity:0.5,
       currentJoinedMember: 0,
       dialogVisible: false,
@@ -139,17 +144,51 @@ export default {
     this.gameId = prompt("gameId?");
     this.userId = prompt("userId?");
 // @ is an alias to /src
-    const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
+//     const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
+//
+//     eventSource.onmessage = (event) => {
+//
+//       const data = JSON.parse(event.data);
+//
+//       this.changeGameView(data);
+//
+//     };
+//     this.connection = new WebSocket("ws://localhost:8080");
+//     this.connection2 = new WebSocket("ws://localhost:8080/stomp/game");
+//     this.connection3 = new WebSocket("ws://localhost:8080/pub/stomp/game");
+//
+//     this.connection.onmessage = function (event) {
+//       console.log("connection.onmessage : " + event);
+//     }
+//     this.connection.onopen = function (event) {
+//       console.log("connection.onopen : " + event);
+//     }
+//     this.connection2.onmessage = function (event) {
+//       console.log("connection2.onmessage : " + event);
+//     }
+//     this.connection2.onopen = function (event) {
+//       console.log("connection2.onopen : " + event);
+//     }
+//     this.connection3.onmessage = function (event) {
+//       console.log("connection3.onmessage : " + event);
+//     }
+//     this.connection3.onopen = function (event) {
+//       console.log("connection3.onopen : " + event);
+//     }
+    this.stompClient = Stomp.over(new SockJS('http://localhost:8080/stomp/game'));
+    this.stompClient.connect({}, this.successFunction);
 
-    eventSource.onmessage = (event) => {
-
-      const data = JSON.parse(event.data);
-
-      this.changeGameView(data);
-
-    };
   },
   methods: {
+    successFunction() {
+      this.stompClient.subscribe('/sub', function (response) {
+        console.log("1 : " + response);
+        console.log("2 : " + response.body);
+        console.log("3 : " + JSON.parse(response.body));
+        console.log("4 : " + JSON.parse(response.body).content);
+      });
+
+    },
     async setUserInfo(data) {
       let response = await fetch(`http://localhost:8080/member/user-id/${data.currentUserId}`, {
         method: "get",
@@ -305,24 +344,41 @@ export default {
         };
       } else {
         game = {
-          "gameId" : this.gameId,
-          "user1Id" : this.user1Id,
-          "user2Id" : this.user2Id,
-          "currentUserId" : this.userId,
-          "gameScore" : isSelectBtn ? Number(currentScore): 1 + Number(currentScore),
-          "status" : isSelectBtn ? "S" : "G"
+          "gameId": this.gameId,
+          "user1Id": this.user1Id,
+          "user2Id": this.user2Id,
+          "currentUserId": this.userId,
+          "gameScore": isSelectBtn ? Number(currentScore) : 1 + Number(currentScore),
+          "status": isSelectBtn ? "S" : "G"
         };
       }
+      console.log("Send message:" + this.message);
+      console.log("Send message game: " + game);
 
-      let response = await fetch(`http://localhost:8080/game`, {
-        method: "post",
-        body: JSON.stringify(game),
-        headers: {
-          "Content-Type": "application/json; charset=utf-8"
-        }
-      })
+      if (this.stompClient && this.stompClient.connected) {
 
-      console.log(response);
+
+        let game2 = {
+            "gameId": 'e0e6d532-b538-4f51-8573-df04a6598a39',
+            "user1Id": '1',
+            "user2Id": '0',
+            "currentUserId": '1',
+            "gameScore": '0',
+            "status": 'A'
+        };
+
+        // this.stompClient.send("/receive", JSON.stringify(game), {});
+        this.stompClient.send("/pub/test", JSON.stringify(game2), {});
+      }
+      // let response = await fetch(`http://localhost:8080/game`, {
+      //   method: "post",
+      //   body: JSON.stringify(game),
+      //   headers: {
+      //     "Content-Type": "application/json; charset=utf-8"
+      //   }
+      // })
+
+      // console.log(response);
     },
     clickDialogButton(isConfirm) {
       if (isConfirm) {
@@ -342,6 +398,7 @@ export default {
     },
     exitBtnClickEvent() {
       console.log("exitBtnClickEvent");
+      this.sendMessage(false, true);
     },
 
     // private String gameId;

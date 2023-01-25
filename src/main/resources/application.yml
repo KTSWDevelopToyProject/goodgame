@@ -7,7 +7,10 @@ spring:
     mongodb:
       host: 54.180.176.187
       port: 27017
-      database: chatdb
+      database: good_game
+    redis:
+      host: 54.180.176.187
+      port: 6379
 logging:
   level:
     root: debug
