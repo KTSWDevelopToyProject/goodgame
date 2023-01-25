@@ -114,7 +114,7 @@ export default {
 
   },
   props: {
-    room: {
+    createdRoom: {
       type: Object,
     },
   },
@@ -141,10 +141,10 @@ export default {
     };
   },
   created() {
-    this.gameId = this.room.gameId;
-    this.userId = this.room.userId;
+    this.gameId = this.createdRoom.gameId;
+    this.userId = this.createdRoom.userId;
 // @ is an alias to /src
-    const eventSource = new EventSource(`http://localhost:8080/game/${this.room.gameId}`);
+    const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
 
     eventSource.onmessage = (event) => {
 

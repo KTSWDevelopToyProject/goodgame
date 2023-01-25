@@ -32,7 +32,9 @@ public class WaitingGameHandler {
     public Mono<ServerResponse> createRoom(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(Room.class)
                 .flatMap(room -> {
-                    room.setGameId(UUID.randomUUID().toString());
+                    if (room.getGameId() == null || room.getGameId() == "") {
+                        room.setGameId(UUID.randomUUID().toString());
+                    }
                     return waitingGameService.createRoom(room);
                 })
                 .flatMap(room -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
