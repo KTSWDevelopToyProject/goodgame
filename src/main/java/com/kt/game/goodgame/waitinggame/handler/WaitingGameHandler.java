@@ -9,6 +9,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class WaitingGameHandler {
@@ -29,7 +31,10 @@ public class WaitingGameHandler {
      */
     public Mono<ServerResponse> createRoom(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(Room.class)
-                .flatMap(waitingGameService::createRoom)
+                .flatMap(room -> {
+                    room.setGameId(UUID.randomUUID().toString());
+                    return waitingGameService.createRoom(room);
+                })
                 .flatMap(room -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(room));
     }

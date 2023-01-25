@@ -113,6 +113,11 @@ export default {
   components: {
 
   },
+  props: {
+    room: {
+      type: Object,
+    },
+  },
   data() {
     return {
       gameMaxScore: 3,
@@ -136,10 +141,10 @@ export default {
     };
   },
   created() {
-    this.gameId = prompt("gameId?");
-    this.userId = prompt("userId?");
+    this.gameId = this.room.gameId;
+    this.userId = this.room.userId;
 // @ is an alias to /src
-    const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
+    const eventSource = new EventSource(`http://localhost:8080/game/${this.room.gameId}`);
 
     eventSource.onmessage = (event) => {
 

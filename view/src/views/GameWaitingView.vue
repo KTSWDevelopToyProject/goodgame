@@ -32,23 +32,33 @@
           </el-menu>
         <div class="aside-sub-menu-3">
             <div class="aside-sub-menu-3-title">
-              <div v-if="drawer == false">
+              <div v-if="creatingRoomVisible == false">
                 <div class="room-create-title">
                 <b>방 만들기</b>
                 </div>
                 <div class="room-create-button">
-                  <el-button type="primary" style="margin-left: 16px" @click="drawer = true">
+                  <el-button type="primary" style="margin-left: 16px" @click="creatingRoomVisible = true">
                     PUSH
                   </el-button>
                 </div>
               </div>
-              <div v-if="drawer == true">
-                <b>방 생성 완료</b>
+              <div v-if="creatingRoomVisible == true">
+                <b>방 생성 중</b>
               </div>
             </div>
-          <el-drawer class="game-view-drawer" v-model="drawer" title="game-play" :with-header="false" size=1580>
-            <GameView></GameView>
+          <!-- 방 생성 모달 -->
+          <el-dialog title="방 생성하기" v-model="creatingRoomVisible" width="800px">
+            <creating-room-view @creatingRoomViewModalCancel="cancelCreatingRoomViewModal"
+                                @enterGameRoom="enterGameRoom"
+            ></creating-room-view>
+          </el-dialog>
+
+          <!-- 게임 방 화면 -->
+          <el-drawer class="game-view-drawer" v-model="gameRoomVisible" title="game-play" :with-header="false" size=1580>
+            <game-view
+                :room="this.room"></game-view>
           </el-drawer>
+
         </div>
       </el-aside>
       <el-container>
@@ -71,28 +81,37 @@
 
 <script>
 import GameView from "@/views/GameView.vue";
+import CreatingRoomView from "@/views/CreatingRoomView.vue";
 
 export default {
   name: "GameWaitingView",
 
   components: {
     GameView,
+    CreatingRoomView,
   },
 
   data() {
     return {
       baseUrl: `http://localhost:8080/waiting-rooms`,
+      room : {
+        roomName: "",
+        leftParticipant: "",
+        countOfParticipants: "",
+        roomStatus: "",
+      },
       rooms : [],
 
-      drawer : false,
+      creatingRoomVisible : false,
+      gameRoomVisible : false,
 
     };
   },
 
   created() {
     const eventSource = new EventSource(this.baseUrl);
-    eventSource.onopen = evnet => {
-      console.log(evnet);
+    eventSource.onopen = event => {
+      console.log(event);
       console.log("응답 connection 열림!!!");
     };
     eventSource.onmessage = event => {
@@ -108,9 +127,17 @@ export default {
   },
 
   methods: {
-    // pushGameButton() {
-    //  this.drawer = ref(false);
-    // }
+
+    enterGameRoom(data) {
+      this.room = data;
+      this.gameRoomVisible = true;
+      this.cancelCreatingRoomViewModal();
+    },
+
+    cancelCreatingRoomViewModal() {
+      this.creatingRoomVisible = false;
+    },
+
   },
 }
 </script>

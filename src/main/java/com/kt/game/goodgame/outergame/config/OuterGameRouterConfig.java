@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Configuration
 @RequiredArgsConstructor
-public class InnerGameRouterConfig {
+public class OuterGameRouterConfig {
 
     private final MemberHandler memberHandler;
     private final GameHistoryHandler gameHistoryHandler;
