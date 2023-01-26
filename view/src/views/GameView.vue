@@ -141,10 +141,10 @@ export default {
     };
   },
   created() {
-    this.gameId = prompt('gameId?');
-    this.userId = prompt('userId?');
-    // this.gameId = this.createdRoom.gameId;
-    // this.userId = this.createdRoom.currentUserId;
+    // this.gameId = prompt('gameId?');
+    // this.userId = prompt('userId?');
+    this.gameId = this.createdRoom.gameId;
+    this.userId = this.createdRoom.currentUserId;
 // @ is an alias to /src
     const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
 
