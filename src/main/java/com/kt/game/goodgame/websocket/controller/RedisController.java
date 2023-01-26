@@ -2,7 +2,6 @@ package com.kt.game.goodgame.websocket.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kt.game.goodgame.websocket.domain.GameMessage;
-import com.kt.game.goodgame.websocket.service.RedisPubService;
 import com.kt.game.goodgame.websocket.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 public class RedisController {
     private final RedisService redisService;
-    private final RedisPubService redisPubService;
 
 //    @PostMapping("api/redisStringTest")
 //    public String sendString(@RequestBody GameMessage gameMessage) {
