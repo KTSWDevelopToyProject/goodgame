@@ -124,8 +124,8 @@ export default {
       eventSource: '',
       gameId: '',
       userId: '',
-      user1Id: '',
-      user2Id: '',
+      leftParticipant: '',
+      rightParticipant: '',
       isCirclePlusDisabled: true,
       isCirclePlusOpacity: 0.5,
       isSelectBtnDisabled: true,
@@ -141,8 +141,10 @@ export default {
     };
   },
   created() {
+    // this.gameId = prompt('gameId?');
+    // this.userId = prompt('userId?');
     this.gameId = this.createdRoom.gameId;
-    this.userId = this.createdRoom.userId;
+    this.userId = this.createdRoom.currentUserId;
 // @ is an alias to /src
     const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
 
@@ -173,7 +175,7 @@ export default {
 
 
       switch (data.currentUserId) {
-        case data.user1Id:
+        case data.leftParticipant:
           this.user1_info = await response.json();
           this.user1_rating = await response2.json();
           document.querySelector("#user1_id").textContent = this.user1_info.userId;
@@ -183,7 +185,7 @@ export default {
           document.querySelector("#user1_winning_rate").textContent = String((this.user1_rating.win / this.user1_rating.total) * 100);
           console.log("user1 userId : " + this.user1_info.userId + ", user1 userName : " + this.user1_info.userName);
           break;
-        case data.user2Id:
+        case data.rightParticipant:
           this.user2_info = await response.json();
           this.user2_rating = await response2.json();
           document.querySelector("#user2_id").textContent = this.user2_info.userId;
@@ -200,8 +202,8 @@ export default {
     },
     changeGameView(data) {
       console.log(data);
-      this.user1Id = data.user1Id;
-      this.user2Id = data.user2Id;
+      this.leftParticipant = data.leftParticipant;
+      this.rightParticipant = data.rightParticipant;
       document.querySelector("#gameScore").textContent = '';
       document.querySelector("#gameScore").textContent = data.gameScore;
 
@@ -237,7 +239,7 @@ export default {
           this.currentJoinedMember++;
           this.setUserInfo(data);
           if (this.currentJoinedMember === 2) {
-            if (this.userId === data.user1Id) {
+            if (this.userId === data.leftParticipant) {
               this.buttonAction(false);
             } else {
               this.buttonAction(true);
@@ -266,8 +268,8 @@ export default {
       console.log('circlePlusClickEvent');
       // let game = {
       //   "gameId" : this.gameId,
-      //   "user1Id" : this.user1Id,
-      //   "user2Id" : this.user2Id,
+      //   "leftParticipant" : this.leftParticipant,
+      //   "rightParticipant" : this.rightParticipant,
       //   "currentUserId" : this.userId,
       //   "gameScore" : 1 + Number(currentScore),
       //   "status" : "G"
@@ -288,8 +290,8 @@ export default {
       console.log('selectBtnClickEvent');
       // let game = {
       //   "gameId" : this.gameId,
-      //   "user1Id" : this.user1Id,
-      //   "user2Id" : this.user2Id,
+      //   "leftParticipant" : this.leftParticipant,
+      //   "rightParticipant" : this.rightParticipant,
       //   "currentUserId" : this.userId,
       //   "gameScore" : Number(currentScore),
       //   "status" : "S"
@@ -302,8 +304,8 @@ export default {
       if (isEnd) {
         game = {
           "gameId" : this.gameId,
-          "user1Id" : this.user1Id,
-          "user2Id" : this.user2Id,
+          "leftParticipant" : this.leftParticipant,
+          "rightParticipant" : this.rightParticipant,
           "currentUserId" : this.userId,
           "gameScore" : Number(currentScore) + 1,
           "status" : "E"
@@ -311,8 +313,8 @@ export default {
       } else {
         game = {
           "gameId" : this.gameId,
-          "user1Id" : this.user1Id,
-          "user2Id" : this.user2Id,
+          "leftParticipant" : this.leftParticipant,
+          "rightParticipant" : this.rightParticipant,
           "currentUserId" : this.userId,
           "gameScore" : isSelectBtn ? Number(currentScore): 1 + Number(currentScore),
           "status" : isSelectBtn ? "S" : "G"
@@ -363,9 +365,9 @@ export default {
       console.log("sendResult()");
       let gameHistory = {
         "gameId" : this.gameId,
-        "leftUserId" : this.user1Id,
-        "rightUserId" : this.user2Id,
-        "winnerFlag" : this.userId === this.user1Id ? "L" : "R",
+        "leftUserId" : this.leftParticipant,
+        "rightUserId" : this.rightParticipant,
+        "winnerFlag" : this.userId === this.leftParticipant ? "L" : "R",
         "gameStatusCode" : "E"
       };
       let response = await fetch(`http://localhost:8080/game-history`, {

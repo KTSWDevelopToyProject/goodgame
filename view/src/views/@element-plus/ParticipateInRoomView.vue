@@ -61,11 +61,11 @@ export default {
         let roomResponse = await this.$axios.post(this.creatRoomUrl, this.createdRoom);
 
         this.game.gameId = roomResponse.data.gameId;
-        this.game.user1Id = roomResponse.data.leftParticipant;
-        this.game.user2Id = roomResponse.data.rightParticipant;
+        this.game.leftParticipant = roomResponse.data.leftParticipant;
+        this.game.rightParticipant = roomResponse.data.rightParticipant;
         this.game.currentUserId = roomResponse.data.rightParticipant;
         this.game.gameScore = "0";
-        this.game.status = "G";
+        this.game.status = "A";
 
         let response = await this.createGame();
         this.$emit("enterGameRoom", response.data);

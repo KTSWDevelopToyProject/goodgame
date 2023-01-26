@@ -51,8 +51,8 @@ export default {
         let roomResponse = await this.$axios.post(this.creatRoomUrl, this.room);
 
         this.game.gameId = roomResponse.data.gameId;
-        this.game.user1Id = roomResponse.data.leftParticipant;
-        this.game.user2Id = "";
+        this.game.leftParticipant = roomResponse.data.leftParticipant;
+        this.game.rightParticipant = "";
         this.game.currentUserId = roomResponse.data.leftParticipant;
         this.game.gameScore = "0";
         this.game.status = "A";

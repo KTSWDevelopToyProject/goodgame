@@ -72,7 +72,7 @@
           <!-- 방 생성 모달 by 우측 유저 -->
           <el-dialog title="방 참여하기" v-model="participateInRoomVisible" width="800px">
             <participate-in-room-view @participateInRoomViewModalCancel="cancelParticipateInRoomViewModel"
-                                      @participateInGameRoom="participateInGameRoom" ref="ParticipateInRoomView"
+                                      @enterGameRoom="enterGameRoom" ref="ParticipateInRoomView"
             ></participate-in-room-view>
           </el-dialog>
 

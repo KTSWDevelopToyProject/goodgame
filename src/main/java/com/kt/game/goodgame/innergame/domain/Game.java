@@ -10,8 +10,8 @@ public class Game {
     @Id
     private String id;
     private String gameId;
-    private String user1Id;
-    private String user2Id;
+    private String leftParticipant;
+    private String rightParticipant;
     private String currentUserId;
     private String gameScore;
     private String status; // A: Access, G : go, S : stop, E : end
