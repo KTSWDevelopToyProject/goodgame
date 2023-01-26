@@ -140,20 +140,27 @@ export default {
       console.log("응답 connection 열림!!!");
     };
     eventSource.onmessage = event => {
-      let gameIdOfRemovedRoom = "";
       const roomData = JSON.parse(event.data);
+      let gameIdOfRemovedRoom = roomData.gameId;
 
-      if (roomData.roomStatus ==="R") {
-        gameIdOfRemovedRoom = roomData.gameId;
+      if (roomData.roomStatus === "R") {
         this.rooms.forEach((room, index) => {
           if (room.gameId === gameIdOfRemovedRoom) {
             this.rooms.splice(index, 1);
           }
         });
-      } else {
-        this.rooms.push(roomData);
       }
-      console.log(this.rooms);
+
+      if (roomData.roomStatus === "A") {
+        this.rooms.forEach((room, index) => {
+          if (room.gameId === gameIdOfRemovedRoom) {
+            this.rooms.splice(index, 1);
+          }
+        });
+      }
+
+      this.rooms.push(roomData);
+
     };
     eventSource.onerror = error => {
       eventSource.close();
@@ -166,7 +173,6 @@ export default {
 
     enterGameRoom(data) {
       this.createdRoom = data;
-      this.gameRoomVisible = true;
       this.cancelCreatingRoomViewModal();
       this.offParticipateInRoomVisible();
       this.onGameRoomVisible();
