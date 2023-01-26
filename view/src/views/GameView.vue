@@ -141,10 +141,10 @@ export default {
     };
   },
   created() {
-    // this.gameId = prompt('gameId?');
-    // this.userId = prompt('userId?');
-    this.gameId = this.createdRoom.gameId;
-    this.userId = this.createdRoom.currentUserId;
+    this.gameId = prompt('gameId?');
+    this.userId = prompt('userId?');
+    // this.gameId = this.createdRoom.gameId;
+    // this.userId = this.createdRoom.currentUserId;
 // @ is an alias to /src
     const eventSource = new EventSource(`http://localhost:8080/game/${this.gameId}`);
 
@@ -157,42 +157,64 @@ export default {
     };
   },
   methods: {
+    isEmpty(value, setValue) {
+      if (value == null || value.length === 0 || Number.isNaN(value)) {
+        if (setValue == null || setValue.length === 0) {
+          return "";
+        } else {
+          return setValue;
+        }
+      } else {
+        return value;
+      }
+    },
     async setUserInfo(data) {
-      let response = await fetch(`http://localhost:8080/member/user-id/${data.currentUserId}`, {
+      let response;
+      let response2;
+
+      await fetch(`http://localhost:8080/member/user-id/${data.currentUserId}`, {
         method: "get",
         headers: {
           "Content-Type": "application/json; charset=utf-8"
         }
+      }).then(res => res.json()).then(data => response = data).catch(err => {
+        response = {};
+        console.log(err);
       });
 
-      let response2 = await fetch(`http://localhost:8080/rating/${data.currentUserId}`, {
+      await fetch(`http://localhost:8080/rating/${data.currentUserId}`, {
         method: "get",
         headers: {
           "Content-Type": "application/json; charset=utf-8"
         }
+      }).then(res => res.json()).then(data => response2 = data).catch(err => {
+        response2 = {};
+        console.log(err);
       });
+
 
 
 
       switch (data.currentUserId) {
         case data.leftParticipant:
-          this.user1_info = await response.json();
-          this.user1_rating = await response2.json();
-          document.querySelector("#user1_id").textContent = this.user1_info.userId;
-          document.querySelector("#user1_name").textContent = this.user1_info.userName;
-          document.querySelector("#user1_win").textContent = this.user1_rating.win;
-          document.querySelector("#user1_total").textContent = this.user1_rating.total;
-          document.querySelector("#user1_winning_rate").textContent = String((this.user1_rating.win / this.user1_rating.total) * 100);
+          this.user1_info = response;
+          this.user1_rating = response2;
+          document.querySelector("#user1_id").textContent = this.isEmpty(this.user1_info.userId);
+          document.querySelector("#user1_name").textContent = this.isEmpty(this.user1_info.userName);
+          document.querySelector("#user1_win").textContent = this.isEmpty(this.user1_rating.win, 0);
+          document.querySelector("#user1_total").textContent = this.isEmpty(this.user1_rating.total, 0);
+          document.querySelector("#user1_winning_rate").textContent = String(this.isEmpty((this.user1_rating.win / this.user1_rating.total) * 100, 0));
           console.log("user1 userId : " + this.user1_info.userId + ", user1 userName : " + this.user1_info.userName);
           break;
         case data.rightParticipant:
-          this.user2_info = await response.json();
-          this.user2_rating = await response2.json();
-          document.querySelector("#user2_id").textContent = this.user2_info.userId;
-          document.querySelector("#user2_name").textContent = this.user2_info.userName;
-          document.querySelector("#user2_win").textContent = this.user2_rating.win;
-          document.querySelector("#user2_total").textContent = this.user2_rating.total;
-          document.querySelector("#user2_winning_rate").textContent = String((this.user2_rating.win / this.user2_rating.total) * 100);
+          this.user2_info = response;
+          this.user2_rating = response2;
+
+          document.querySelector("#user2_id").textContent = this.isEmpty(this.user2_info.userId);
+          document.querySelector("#user2_name").textContent = this.isEmpty(this.user2_info.userName);
+          document.querySelector("#user2_win").textContent = this.isEmpty(this.user2_rating.win, 0);
+          document.querySelector("#user2_total").textContent = this.isEmpty(this.user2_rating.total, 0);
+          document.querySelector("#user2_winning_rate").textContent = String(this.isEmpty((this.user2_rating.win / this.user2_rating.total) * 100, 0));
           console.log("user2 userId : " + this.user2_info.userId + ", user2 userName : " + this.user2_info.userName);
           break;
         default:
