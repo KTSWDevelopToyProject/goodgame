@@ -1,5 +1,6 @@
 package com.kt.game.goodgame.websocket.config;
 
+import com.kt.game.goodgame.innergame.service.StompSocketService;
 import com.kt.game.goodgame.websocket.service.RedisSubscriber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -83,7 +84,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) { // (2)
+    public MessageListenerAdapter listenerAdapter(StompSocketService subscriber) { // (2)
         return new MessageListenerAdapter(subscriber, "onMessage");
     }
 
@@ -99,7 +100,7 @@ public class RedisConfig {
 
     @Bean
     public ChannelTopic channelTopic() { // (4)
-        return new ChannelTopic("chatroom");
+        return new ChannelTopic("topic1");
     }
 // 2. end
 

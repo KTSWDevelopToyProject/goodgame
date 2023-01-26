@@ -32,16 +32,23 @@ public class StompSocketService implements MessageListener {
         List<String> messageList = new ArrayList<>();
 
         try {
+
+//            String message2 = (String) redisTemplate.getStringSerializer()
+//                    .deserialize(message.getBody());
+//
+//            String data = mapper.readValue(message2, String.class);
+//            System.out.println("1-1 : " + data);
+
             GameMessage gameMessage = mapper.readValue(message.getBody(), GameMessage.class);
             messageList.add(message.toString());
 
-            System.out.println("받은 메시지 = " + message.toString());
+            System.out.println("2-1 : 받은 메시지 = " + message.toString());
             System.out.println("gameMessage.getGameId() = " + gameMessage.getGameId());
             System.out.println("gameMessage.getUser1Id() = " + gameMessage.getUser1Id());
             System.out.println("gameMessage.getUser2Id() = " + gameMessage.getUser2Id());
             System.out.println("gameMessage.getCurrentUserId() = " + gameMessage.getCurrentUserId());
             System.out.println("gameMessage.getGameScore() = " + gameMessage.getGameScore());
-            simpMessagingTemplate.convertAndSend("/sub", message); // 1.
+            simpMessagingTemplate.convertAndSend("/sub", gameMessage); // 1.
         } catch (IOException e) {
             e.printStackTrace();
         }
