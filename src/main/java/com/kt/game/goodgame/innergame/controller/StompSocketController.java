@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
@@ -17,14 +18,14 @@ import java.util.HashMap;
 public class StompSocketController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final StompSocketService stompSocketService;
-    @MessageMapping("/test")
+    @MessageMapping("/test/{gameId}")
 //    @SendTo("/sub/{key}")
 //    @MessageMapping("/test")  // 1. test > sub
-    public Object test(@RequestBody GameMessage msg) {
-        System.out.println("msg : " + msg.toString());
+    public Object test(@PathVariable String gameId, @RequestBody Game game) {
+        System.out.println("msg : " + game.toString());
         HashMap<String, Object> payload = new HashMap<>();
         payload.put("test", "tetete");
-        stompSocketService.sendMessage(msg);
+        stompSocketService.sendMessage(gameId, game);
 //        simpMessagingTemplate.convertAndSend("/sub", payload); // 1.
         return payload;
     }

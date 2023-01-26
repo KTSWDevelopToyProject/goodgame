@@ -39,7 +39,7 @@ public class RedisController {
     @PostMapping("api/chat")
     public String pubSub(@RequestBody GameMessage gameMessage) {
         //메시지 보내기
-        redisPubService.sendMessage(gameMessage);
+//        redisPubService.sendMessage(gameMessage);
 
         return "success";
     }

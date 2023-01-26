@@ -1,18 +1,22 @@
 package com.kt.game.goodgame.innergame.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kt.game.goodgame.websocket.domain.GameMessage;
+import com.kt.game.goodgame.innergame.domain.Game;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -21,9 +25,18 @@ public class StompSocketService implements MessageListener {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper mapper = new ObjectMapper();
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final RedisPubService redisPubService;
+    private Map<String, ChannelTopic> channels;
 
-    public void sendMessage(GameMessage gameMessage) {
-        redisTemplate.convertAndSend("topic1", gameMessage);
+    @PostConstruct
+    public void init() {
+        channels = new HashMap<>();
+    }
+
+    public void sendMessage(String gameId, Game game) {
+//        redisTemplate.convertAndSend("topic1", gameMessage);
+        ChannelTopic channelTopic = channels.get(gameId);
+        redisPubService.sendMessage(channelTopic, game);
 
     }
 
@@ -39,16 +52,16 @@ public class StompSocketService implements MessageListener {
 //            String data = mapper.readValue(message2, String.class);
 //            System.out.println("1-1 : " + data);
 
-            GameMessage gameMessage = mapper.readValue(message.getBody(), GameMessage.class);
+            Game game = mapper.readValue(message.getBody(), Game.class);
             messageList.add(message.toString());
 
             System.out.println("2-1 : 받은 메시지 = " + message.toString());
-            System.out.println("gameMessage.getGameId() = " + gameMessage.getGameId());
-            System.out.println("gameMessage.getUser1Id() = " + gameMessage.getUser1Id());
-            System.out.println("gameMessage.getUser2Id() = " + gameMessage.getUser2Id());
-            System.out.println("gameMessage.getCurrentUserId() = " + gameMessage.getCurrentUserId());
-            System.out.println("gameMessage.getGameScore() = " + gameMessage.getGameScore());
-            simpMessagingTemplate.convertAndSend("/sub", gameMessage); // 1.
+            System.out.println("gameMessage.getGameId() = " + game.getGameId());
+            System.out.println("gameMessage.getUser1Id() = " + game.getUser1Id());
+            System.out.println("gameMessage.getUser2Id() = " + game.getUser2Id());
+            System.out.println("gameMessage.getCurrentUserId() = " + game.getCurrentUserId());
+            System.out.println("gameMessage.getGameScore() = " + game.getGameScore());
+            simpMessagingTemplate.convertAndSend("/sub", game); // 1.
         } catch (IOException e) {
             e.printStackTrace();
         }
