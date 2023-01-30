@@ -73,13 +73,14 @@ public class RedisConfig {
 // 2. https://velog.io/@ohjinseo/WebSocket-Spring-Boot-stomp-Redis-PubSub-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%B1%84%ED%8C%85-%EA%B5%AC%ED%98%84
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer( // (1)
-                                                                        RedisConnectionFactory connectionFactory,
-                                                                        MessageListenerAdapter listenerAdapter,
-                                                                        ChannelTopic channelTopic
+                                                                        RedisConnectionFactory connectionFactory
+//            ,
+//                                                                        MessageListenerAdapter listenerAdapter,
+//                                                                        ChannelTopic channelTopic
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(listenerAdapter, channelTopic);
+//        container.addMessageListener(listenerAdapter, channelTopic);
         return container;
     }
 

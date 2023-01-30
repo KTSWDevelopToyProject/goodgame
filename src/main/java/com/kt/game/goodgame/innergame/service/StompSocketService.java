@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class StompSocketService implements MessageListener {
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisMessageListenerContainer redisMessageListenerContainer;
     private final ObjectMapper mapper = new ObjectMapper();
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final RedisPubService redisPubService;
@@ -36,8 +38,21 @@ public class StompSocketService implements MessageListener {
     public void sendMessage(String gameId, Game game) {
 //        redisTemplate.convertAndSend("topic1", gameMessage);
         ChannelTopic channelTopic = channels.get(gameId);
-        redisPubService.sendMessage(channelTopic, game);
+        if (channelTopic == null) {
+            ChannelTopic channel = new ChannelTopic(gameId);
+            redisMessageListenerContainer.addMessageListener(this, channel);
+            channels.put(gameId, channel);
+            redisPubService.sendMessage(channel, game);
+        } else {
+            redisPubService.sendMessage(channelTopic, game);
+        }
 
+    }
+
+    public void deleteTopic(String gameId) {
+        ChannelTopic channel = channels.get(gameId);
+        redisMessageListenerContainer.removeMessageListener(this, channel);
+        channels.remove(gameId);
     }
 
     @Override
@@ -50,17 +65,17 @@ public class StompSocketService implements MessageListener {
 //                    .deserialize(message.getBody());
 //
 //            String data = mapper.readValue(message2, String.class);
-//            System.out.println("1-1 : " + data);
+//            log.info("1-1 : " + data);
 
             Game game = mapper.readValue(message.getBody(), Game.class);
             messageList.add(message.toString());
 
-            System.out.println("2-1 : 받은 메시지 = " + message.toString());
-            System.out.println("gameMessage.getGameId() = " + game.getGameId());
-            System.out.println("gameMessage.getUser1Id() = " + game.getUser1Id());
-            System.out.println("gameMessage.getUser2Id() = " + game.getUser2Id());
-            System.out.println("gameMessage.getCurrentUserId() = " + game.getCurrentUserId());
-            System.out.println("gameMessage.getGameScore() = " + game.getGameScore());
+            log.info("2-1 : 받은 메시지 = " + message.toString());
+            log.info("gameMessage.getGameId() = " + game.getGameId());
+            log.info("gameMessage.getUser1Id() = " + game.getUser1Id());
+            log.info("gameMessage.getUser2Id() = " + game.getUser2Id());
+            log.info("gameMessage.getCurrentUserId() = " + game.getCurrentUserId());
+            log.info("gameMessage.getGameScore() = " + game.getGameScore());
             simpMessagingTemplate.convertAndSend("/sub", game); // 1.
         } catch (IOException e) {
             e.printStackTrace();

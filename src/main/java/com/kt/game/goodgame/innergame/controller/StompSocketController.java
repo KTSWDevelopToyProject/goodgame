@@ -18,16 +18,13 @@ import java.util.HashMap;
 public class StompSocketController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final StompSocketService stompSocketService;
-    @MessageMapping("/test/{gameId}")
+    @MessageMapping("/game/{gameId}")
 //    @SendTo("/sub/{key}")
-//    @MessageMapping("/test")  // 1. test > sub
+//    @MessageMapping("/game")  // 1. test > sub
     public Object test(@PathVariable String gameId, @RequestBody Game game) {
-        System.out.println("msg : " + game.toString());
-        HashMap<String, Object> payload = new HashMap<>();
-        payload.put("test", "tetete");
         stompSocketService.sendMessage(gameId, game);
 //        simpMessagingTemplate.convertAndSend("/sub", payload); // 1.
-        return payload;
+        return null;
     }
 
 }

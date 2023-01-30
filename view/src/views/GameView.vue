@@ -116,9 +116,6 @@ export default {
   },
   data() {
     return {
-      connection: null,
-      connection2: null,
-      connection3: null,
       stompClient: null,
       gameMaxScore: 3,
       eventSource: '',
@@ -130,7 +127,7 @@ export default {
       isCirclePlusOpacity: 0.5,
       isSelectBtnDisabled: true,
       isSelectBtnOpacity: 0.5,
-      isExitBtnDisabled: false,
+      isExitBtnDisabled: true,
       isExitBtnOpacity:0.5,
       currentJoinedMember: 0,
       dialogVisible: false,
@@ -153,28 +150,6 @@ export default {
 //       this.changeGameView(data);
 //
 //     };
-//     this.connection = new WebSocket("ws://localhost:8080");
-//     this.connection2 = new WebSocket("ws://localhost:8080/stomp/game");
-//     this.connection3 = new WebSocket("ws://localhost:8080/pub/stomp/game");
-//
-//     this.connection.onmessage = function (event) {
-//       console.log("connection.onmessage : " + event);
-//     }
-//     this.connection.onopen = function (event) {
-//       console.log("connection.onopen : " + event);
-//     }
-//     this.connection2.onmessage = function (event) {
-//       console.log("connection2.onmessage : " + event);
-//     }
-//     this.connection2.onopen = function (event) {
-//       console.log("connection2.onopen : " + event);
-//     }
-//     this.connection3.onmessage = function (event) {
-//       console.log("connection3.onmessage : " + event);
-//     }
-//     this.connection3.onopen = function (event) {
-//       console.log("connection3.onopen : " + event);
-//     }
     this.stompClient = Stomp.over(new SockJS('http://localhost:8080/stomp/game'));
     this.stompClient.connect({}, this.successFunction);
 
@@ -185,7 +160,8 @@ export default {
         console.log("1 : " + response);
         console.log("2 : " + response.body);
         console.log("3 : " + JSON.parse(response.body));
-        console.log("4 : " + JSON.parse(response.body).content);
+        const data = JSON.parse(response.body);
+        this.changeGameView(data);
       });
 
     },
@@ -355,20 +331,25 @@ export default {
       console.log("Send message:" + this.message);
       console.log("Send message game: " + game);
 
+      // if (this.stompClient && this.stompClient.connected) {
+      //
+      //
+      //   let game2 = {
+      //       "gameId": 'e0e6d532-b538-4f51-8573-df04a6598a39',
+      //       "user1Id": '1',
+      //       "user2Id": '0',
+      //       "currentUserId": '1',
+      //       "gameScore": '0',
+      //       "status": 'A'
+      //   };
+      //
+      //   // this.stompClient.send("/receive", JSON.stringify(game), {});
+      //   this.stompClient.send("/pub/game/" + this.gameId, JSON.stringify(game2), {});
+      // }
+
       if (this.stompClient && this.stompClient.connected) {
-
-
-        let game2 = {
-            "gameId": 'e0e6d532-b538-4f51-8573-df04a6598a39',
-            "user1Id": '1',
-            "user2Id": '0',
-            "currentUserId": '1',
-            "gameScore": '0',
-            "status": 'A'
-        };
-
         // this.stompClient.send("/receive", JSON.stringify(game), {});
-        this.stompClient.send("/pub/test", JSON.stringify(game2), {});
+        this.stompClient.send("/pub/game/" + this.gameId, JSON.stringify(game), {});
       }
       // let response = await fetch(`http://localhost:8080/game`, {
       //   method: "post",
